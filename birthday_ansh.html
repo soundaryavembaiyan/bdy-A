@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ansh!🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: #0d0820;
+    overflow-x: hidden;
+    font-family: 'Lato', sans-serif;
+    position: relative;
+  }
+
+  /* ── Stars ── */
+  #stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    animation: twinkle var(--d) ease-in-out infinite alternate;
+    opacity: 0;
+  }
+
+  @keyframes twinkle {
+    0%   { opacity: 0.1; transform: scale(0.8); }
+    100% { opacity: 0.9; transform: scale(1.2); }
+  }
+
+  /* ── Floating orbs ── */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: drift var(--d) ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes drift {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(var(--tx), var(--ty)) scale(1.15); }
+  }
+
+  /* ── Confetti ── */
+  .confetti {
+    position: fixed;
+    top: -20px;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    animation: fall var(--d) linear infinite;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes fall {
+    0%   { top: -20px; opacity: 1; transform: rotate(0deg) translateX(0); }
+    100% { top: 110vh; opacity: 0.3; transform: rotate(720deg) translateX(var(--sway)); }
+  }
+
+  /* ── Main layout ── */
+  .scene {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    gap: 0;
+  }
+
+  /* ── Greeting ── */
+  .greeting {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: clamp(13px, 2vw, 16px);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #c9b8f0;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.3s;
+  }
+
+  /* ── Name ── */
+  .name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(64px, 14vw, 140px);
+    font-weight: 700;
+    line-height: 1;
+    margin: 12px 0 4px;
+    background: linear-gradient(135deg, #f9c8ff 0%, #c4a7ff 35%, #7ec8f9 70%, #f7d4a0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    animation: fadeUp 1.1s cubic-bezier(0.16,1,0.3,1) forwards 0.7s;
+    filter: drop-shadow(0 0 40px rgba(196,167,255,0.4));
+  }
+
+  /* ── Divider ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 20px 0;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.2s;
+  }
+
+  .divider-line {
+    width: 80px; height: 1px;
+    background: linear-gradient(90deg, transparent, #c4a7ff, transparent);
+  }
+
+  .divider-gem {
+    width: 8px; height: 8px;
+    background: #f9c8ff;
+    transform: rotate(45deg);
+    box-shadow: 0 0 10px #f9c8ff;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 8px #f9c8ff; }
+    50%       { box-shadow: 0 0 20px #f9c8ff, 0 0 40px rgba(249,200,255,0.4); }
+  }
+
+  /* ── Cake ── */
+  .cake-wrap {
+    opacity: 0;
+    animation: fadeDown 1.2s cubic-bezier(0.16,1,0.3,1) forwards 1.5s;
+    margin: 10px 0 30px;
+  }
+
+  .cake-svg { filter: drop-shadow(0 10px 40px rgba(196,167,255,0.5)); }
+
+  /* ── Flame ── */
+  .flame { animation: flicker 0.5s ease-in-out infinite alternate; transform-origin: bottom center; }
+  .flame2 { animation: flicker2 0.4s ease-in-out infinite alternate; transform-origin: bottom center; }
+  .flame3 { animation: flicker3 0.6s ease-in-out infinite alternate; transform-origin: bottom center; }
+
+  @keyframes flicker  { from { transform: scaleX(1)   scaleY(1);   } to { transform: scaleX(0.85) scaleY(1.1);  } }
+  @keyframes flicker2 { from { transform: scaleX(0.9) scaleY(1.05);} to { transform: scaleX(1.1)  scaleY(0.9); } }
+  @keyframes flicker3 { from { transform: scaleX(1.05) scaleY(0.95);} to { transform: scaleX(0.9) scaleY(1.15); } }
+
+  /* ── Wish text ── */
+  .wish {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(16px, 3vw, 22px);
+    color: #e2d4ff;
+    text-align: center;
+    max-width: 520px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 2.2s;
+  }
+
+  /* ── Sparkle dots ── */
+  .sparkle {
+    position: fixed;
+    width: 4px; height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: sparkleAnim var(--d) ease-out forwards;
+    opacity: 0;
+    z-index: 5;
+  }
+
+  @keyframes sparkleAnim {
+    0%   { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--sx),var(--sy)) scale(0); }
+  }
+
+  /* ── Floating balloons ── */
+  .balloon {
+    position: fixed;
+    bottom: -120px;
+    animation: riseUp var(--d) ease-in-out infinite;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.75;
+  }
+
+  @keyframes riseUp {
+    0%   { bottom: -120px; opacity: 0; transform: translateX(0); }
+    10%  { opacity: 0.75; }
+    90%  { opacity: 0.6; }
+    100% { bottom: 110vh; opacity: 0; transform: translateX(var(--sway)); }
+  }
+
+  /* ── Shared animation ── */
+  @keyframes fadeUp   { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
+  @keyframes fadeDown { from { opacity:0; transform: translateY(-20px); } to { opacity:1; transform: translateY(0); } }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 48px;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(200,180,255,0.35);
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 2.8s;
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<canvas id="stars"></canvas>
+
+<!-- Orbs -->
+<div class="orb" style="width:400px;height:400px;background:rgba(120,60,200,0.25);top:-100px;left:-100px;--d:8s;--tx:40px;--ty:60px;"></div>
+<div class="orb" style="width:350px;height:350px;background:rgba(60,120,220,0.18);bottom:-80px;right:-80px;--d:10s;--tx:-50px;--ty:-40px;"></div>
+<div class="orb" style="width:250px;height:250px;background:rgba(240,100,200,0.15);top:40%;left:60%;--d:7s;--tx:30px;--ty:-50px;"></div>
+
+<div class="scene">
+  <p class="greeting">Wishing you a magical</p>
+  <h1 class="name">Ansh</h1>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-gem"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- Cake SVG -->
+  <div class="cake-wrap">
+    <svg class="cake-svg" width="220" height="200" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- candles -->
+      <rect x="68" y="62" width="10" height="32" rx="3" fill="#f9c8ff"/>
+      <rect x="105" y="52" width="10" height="42" rx="3" fill="#c4a7ff"/>
+      <rect x="142" y="62" width="10" height="32" rx="3" fill="#7ec8f9"/>
+
+      <!-- flames -->
+      <g class="flame">
+        <ellipse cx="73" cy="57" rx="5" ry="8" fill="#fff5a0"/>
+        <ellipse cx="73" cy="59" rx="3" ry="5" fill="#ffb830"/>
+      </g>
+      <g class="flame2">
+        <ellipse cx="110" cy="47" rx="5" ry="8" fill="#fff5a0"/>
+        <ellipse cx="110" cy="49" rx="3" ry="5" fill="#ffb830"/>
+      </g>
+      <g class="flame3">
+        <ellipse cx="147" cy="57" rx="5" ry="8" fill="#fff5a0"/>
+        <ellipse cx="147" cy="59" rx="3" ry="5" fill="#ffb830"/>
+      </g>
+
+      <!-- top tier -->
+      <rect x="50" y="94" width="120" height="36" rx="10" fill="#6b3fa0"/>
+      <ellipse cx="110" cy="94" rx="60" ry="10" fill="#8b5cc7"/>
+      <!-- icing drips top -->
+      <path d="M60 94 Q65 110 70 94" fill="#f9c8ff" opacity="0.7"/>
+      <path d="M90 94 Q95 112 100 94" fill="#f9c8ff" opacity="0.7"/>
+      <path d="M120 94 Q125 110 130 94" fill="#f9c8ff" opacity="0.7"/>
+      <path d="M148 94 Q153 108 158 94" fill="#f9c8ff" opacity="0.7"/>
+      <!-- dots on top tier -->
+      <circle cx="75" cy="112" r="3" fill="#ffd6fa" opacity="0.8"/>
+      <circle cx="110" cy="112" r="3" fill="#c4a7ff" opacity="0.8"/>
+      <circle cx="145" cy="112" r="3" fill="#7ec8f9" opacity="0.8"/>
+
+      <!-- bottom tier -->
+      <rect x="30" y="128" width="160" height="46" rx="12" fill="#4a2880"/>
+      <ellipse cx="110" cy="128" rx="80" ry="12" fill="#6b3fa0"/>
+      <!-- icing drips bottom -->
+      <path d="M40 128 Q46 148 52 128" fill="#f9c8ff" opacity="0.7"/>
+      <path d="M72 128 Q78 150 84 128" fill="#c4a7ff" opacity="0.7"/>
+      <path d="M104 128 Q110 152 116 128" fill="#f9c8ff" opacity="0.7"/>
+      <path d="M136 128 Q142 150 148 128" fill="#7ec8f9" opacity="0.7"/>
+      <path d="M168 128 Q172 146 176 128" fill="#f9c8ff" opacity="0.7"/>
+      <!-- dots on bottom tier -->
+      <circle cx="62" cy="150" r="4" fill="#ffd6fa" opacity="0.7"/>
+      <circle cx="90" cy="150" r="3" fill="#c4a7ff" opacity="0.7"/>
+      <circle cx="110" cy="152" r="4" fill="#7ec8f9" opacity="0.7"/>
+      <circle cx="130" cy="150" r="3" fill="#ffd6fa" opacity="0.7"/>
+      <circle cx="158" cy="150" r="4" fill="#c4a7ff" opacity="0.7"/>
+
+      <!-- plate -->
+      <ellipse cx="110" cy="175" rx="88" ry="10" fill="#3a1d6e" opacity="0.6"/>
+
+      <!-- stars scattered -->
+      <text x="25" y="108" font-size="14" fill="#ffd6fa" opacity="0.8">✦</text>
+      <text x="185" y="118" font-size="10" fill="#c4a7ff" opacity="0.8">✦</text>
+      <text x="15" y="145" font-size="8"  fill="#7ec8f9" opacity="0.7">✦</text>
+      <text x="198" y="148" font-size="12" fill="#ffd6fa" opacity="0.7">✦</text>
+    </svg>
+  </div>
+
+  <!-- <p class="wish">May this birthday bring you all the wonder,<br>joy, and magic you deserve.</p> -->
+     <p class="wish">Sending you Warmest Wishes on your Special day! <br>
+        May your Birthday be as Amazing as You Are!</p>
+
+  <p class="footer">Happy Birthday &nbsp;·&nbsp; 🎂 &nbsp;·&nbsp; With love 🫶</p>
+</div>
+
+<script>
+// ── Star canvas ──
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let W, H, stars = [];
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function makeStars() {
+  stars = [];
+  for (let i = 0; i < 180; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.5 + 0.3,
+      speed: Math.random() * 0.003 + 0.001,
+      offset: Math.random() * Math.PI * 2
+    });
+  }
+}
+makeStars();
+
+function drawStars(t) {
+  ctx.clearRect(0, 0, W, H);
+  stars.forEach(s => {
+    const alpha = 0.3 + 0.6 * (0.5 + 0.5 * Math.sin(t * s.speed + s.offset));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+requestAnimationFrame(drawStars);
+
+// ── Confetti ──
+const confettiColors = ['#f9c8ff','#c4a7ff','#7ec8f9','#f7d4a0','#ff9ec7','#a0ffda'];
+for (let i = 0; i < 50; i++) {
+  const el = document.createElement('div');
+  el.className = 'confetti';
+  const d = 3 + Math.random() * 6;
+  el.style.cssText = `
+    left: ${Math.random() * 100}vw;
+    background: ${confettiColors[Math.floor(Math.random() * confettiColors.length)]};
+    width: ${4 + Math.random() * 8}px;
+    height: ${4 + Math.random() * 8}px;
+    border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+    --d: ${d}s;
+    --sway: ${(Math.random() - 0.5) * 120}px;
+    animation-delay: ${Math.random() * d}s;
+  `;
+  document.body.appendChild(el);
+}
+
+// ── Balloons ──
+const balloonColors = ['#f9c8ff','#c4a7ff','#7ec8f9','#ffd6a0','#ff9ec7'];
+for (let i = 0; i < 8; i++) {
+  const el = document.createElement('div');
+  el.className = 'balloon';
+  const color = balloonColors[i % balloonColors.length];
+  const d = 6 + Math.random() * 8;
+  el.style.cssText = `
+    left: ${5 + Math.random() * 90}vw;
+    --d: ${d}s;
+    --sway: ${(Math.random()-0.5)*80}px;
+    animation-delay: ${Math.random() * d}s;
+  `;
+  el.innerHTML = `
+    <svg width="36" height="52" viewBox="0 0 36 52" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="18" cy="18" rx="16" ry="18" fill="${color}" opacity="0.85"/>
+      <ellipse cx="13" cy="10" rx="5" ry="4" fill="rgba(255,255,255,0.3)"/>
+      <path d="M18 36 Q20 42 18 48 Q16 42 18 36" stroke="${color}" stroke-width="1.5" fill="none" opacity="0.6"/>
+    </svg>
+  `;
+  document.body.appendChild(el);
+}
+
+// ── Sparkles on click ──
+document.addEventListener('click', e => {
+  for (let i = 0; i < 12; i++) {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    const angle = (i / 12) * Math.PI * 2;
+    const dist = 40 + Math.random() * 60;
+    s.style.cssText = `
+      left: ${e.clientX - 2}px;
+      top: ${e.clientY - 2}px;
+      background: ${confettiColors[Math.floor(Math.random() * confettiColors.length)]};
+      --d: ${0.6 + Math.random() * 0.4}s;
+      --sx: ${Math.cos(angle) * dist}px;
+      --sy: ${Math.sin(angle) * dist}px;
+    `;
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1100);
+  }
+});
+</script>
+</body>
+</html>
